@@ -5,7 +5,12 @@ const MONGODB_URI = config.mongoUri;
 
 export const connectDatabase = async (): Promise<void> => {
   if (!MONGODB_URI) {
-    process.exit(1); 
+    throw new Error('MONGODB_URI is not configured');
+  }
+
+  // Reuse the current connection in warm serverless instances.
+  if (mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2) {
+    return;
   }
 
   try {
@@ -18,7 +23,7 @@ export const connectDatabase = async (): Promise<void> => {
       connectTimeoutMS: 10000,
     });
   } catch (error) {
-    process.exit(1);
+    throw error;
   }
 };
 
