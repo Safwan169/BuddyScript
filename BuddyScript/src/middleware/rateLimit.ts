@@ -47,3 +47,33 @@ export const registerRateLimiter = rateLimit({
   ...(sharedStore ? { store: sharedStore } : {}),
   handler: limiterHandler('Too many registration attempts. Please try again in 1 hour.'),
 });
+
+const createApiLimiter = (windowMs: number, max: number, message: string) =>
+  rateLimit({
+    windowMs,
+    max,
+    standardHeaders: true,
+    legacyHeaders: false,
+    ...(sharedStore ? { store: sharedStore } : {}),
+    handler: limiterHandler(message),
+  });
+
+// Feed reads can be frequent, but still need guardrails.
+export const feedReadRateLimiter = createApiLimiter(
+  60 * 1000,
+  120,
+  'Too many feed requests. Please slow down and try again shortly.'
+);
+
+// Social interactions are write-heavy and should be throttled more strictly.
+export const socialWriteRateLimiter = createApiLimiter(
+  60 * 1000,
+  80,
+  'Too many write actions. Please try again in a moment.'
+);
+
+export const socialReadRateLimiter = createApiLimiter(
+  60 * 1000,
+  180,
+  'Too many read actions. Please try again in a moment.'
+);

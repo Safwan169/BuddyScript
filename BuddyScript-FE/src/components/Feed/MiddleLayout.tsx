@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { PostComponent } from '../ui/PostCard';
 import FeedStories from './FeedStories';
@@ -9,19 +9,34 @@ import { useGetFeedQuery, useLazyGetFeedQuery } from '@/features/feed/feedApi';
 import type { FeedCursor, FeedPost } from '@/types/api';
 
 const mergeUniquePosts = (existing: FeedPost[], incoming: FeedPost[]): FeedPost[] => {
-  const map = new Map<string, FeedPost>();
-
-  for (const post of existing) {
-    map.set(post.id, post);
-  }
+  const byId = new Map(existing.map((post) => [post.id, post]));
+  const merged = [...existing];
 
   for (const post of incoming) {
-    map.set(post.id, post);
+    if (byId.has(post.id)) {
+      const index = merged.findIndex((item) => item.id === post.id);
+      if (index >= 0) {
+        merged[index] = post;
+      }
+      continue;
+    }
+
+    byId.set(post.id, post);
+    merged.push(post);
   }
 
-  return Array.from(map.values()).sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  return merged;
+};
+
+const MAX_RENDERED_POSTS = 200;
+
+const keepRenderableWindow = (posts: FeedPost[]): FeedPost[] => {
+  if (posts.length <= MAX_RENDERED_POSTS) {
+    return posts;
+  }
+
+  // Keep the newest posts in memory/DOM to prevent long-session UI slowdown.
+  return posts.slice(0, MAX_RENDERED_POSTS);
 };
 
 const MiddleLayout = () => {
@@ -35,16 +50,11 @@ const MiddleLayout = () => {
       return;
     }
 
-    setPosts(data.posts);
+    setPosts(keepRenderableWindow(data.posts));
     setNextCursor(data.nextCursor || null);
   }, [data]);
 
   const canLoadMore = Boolean(nextCursor);
-
-  const sortedPosts = useMemo(
-    () => [...posts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
-    [posts]
-  );
 
   const handleLoadMore = async () => {
     if (!nextCursor) {
@@ -58,7 +68,7 @@ const MiddleLayout = () => {
         beforeId: nextCursor.beforeId,
       }).unwrap();
 
-      setPosts((prev) => mergeUniquePosts(prev, result.posts));
+      setPosts((prev) => keepRenderableWindow(mergeUniquePosts(prev, result.posts)));
       setNextCursor(result.nextCursor || null);
     } catch (error: any) {
       toast.error(error?.data?.message || 'Failed to load more posts');
@@ -74,9 +84,9 @@ const MiddleLayout = () => {
 
           {isLoading ? (
             <div className="text-center py-4">Loading feed...</div>
-          ) : sortedPosts.length > 0 ? (
+          ) : posts.length > 0 ? (
             <>
-              {sortedPosts.map((post) => (
+              {posts.map((post) => (
                 <PostComponent key={post.id} postData={post} />
               ))}
 

@@ -17,22 +17,30 @@ import {
   getPostSchema,
   getFeedSchema,
 } from "../validators/post.validator";
+import {
+  feedReadRateLimiter,
+  socialReadRateLimiter,
+  socialWriteRateLimiter,
+} from "../middleware/rateLimit";
 
 const router = Router();
 
 router.use(authenticate);
 
-router.route("/").post(validateRequest(createPostSchema), createPost).get(validateRequest(getFeedSchema), getFeed);
+router
+  .route("/")
+  .post(socialWriteRateLimiter, validateRequest(createPostSchema), createPost)
+  .get(feedReadRateLimiter, validateRequest(getFeedSchema), getFeed);
 
 router
   .route("/:id")
-  .get(validateRequest(getPostSchema), getPost)
-  .put(validateRequest(updatePostSchema), updatePost)
-  .delete(validateRequest(getPostSchema), deletePost);
+  .get(socialReadRateLimiter, validateRequest(getPostSchema), getPost)
+  .put(socialWriteRateLimiter, validateRequest(updatePostSchema), updatePost)
+  .delete(socialWriteRateLimiter, validateRequest(getPostSchema), deletePost);
 
-router.post("/:id/like", validateRequest(getPostSchema), likePost);
-router.delete("/:id/like", validateRequest(getPostSchema), unlikePost);
-router.get("/:id/likes", validateRequest(getPostSchema), getPostLikes);
+router.post("/:id/like", socialWriteRateLimiter, validateRequest(getPostSchema), likePost);
+router.delete("/:id/like", socialWriteRateLimiter, validateRequest(getPostSchema), unlikePost);
+router.get("/:id/likes", socialReadRateLimiter, validateRequest(getPostSchema), getPostLikes);
 
 export default router;
 

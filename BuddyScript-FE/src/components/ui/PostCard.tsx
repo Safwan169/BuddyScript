@@ -576,12 +576,6 @@ export const PostComponent = ({ postData }: PostComponentProps) => {
   const [fetchPostLikes] = useLazyGetPostLikesQuery();
   const [showPostLikes, setShowPostLikes] = useState(false);
   const [postLikedUsers, setPostLikedUsers] = useState<Author[]>([]);
-  const [topReactionTypes, setTopReactionTypes] = useState<ReactionType[]>(() => {
-    const initial: ReactionType[] = [];
-    if (postData.likedByCurrentUser && postData.userReaction) initial.push(postData.userReaction as ReactionType);
-    if (!initial.includes('like')) initial.push('like');
-    return initial;
-  });
 
   useEffect(() => {
     setPostLiked(postData.likedByCurrentUser);
@@ -591,24 +585,6 @@ export const PostComponent = ({ postData }: PostComponentProps) => {
       postData.likedByCurrentUser ? ((postData.userReaction as ReactionType) || 'like') : null
     );
   }, [postData.commentCount, postData.likeCount, postData.likedByCurrentUser, postData.userReaction]);
-
-  useEffect(() => {
-    if (postData.likeCount > 0) {
-      void fetchPostLikes({ postId: postData.id, limit: 20 }).then((res) => {
-        if (res.data) {
-          setPostLikedUsers(res.data.users);
-          const types: ReactionType[] = [];
-          for (const u of res.data.users) {
-            const t = (u.reactionType || 'like') as ReactionType;
-            if (!types.includes(t)) types.push(t);
-            if (types.length === 3) break;
-          }
-          if (types.length > 0) setTopReactionTypes(types);
-        }
-      });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postData.id, postData.likeCount]);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -668,10 +644,6 @@ export const PostComponent = ({ postData }: PostComponentProps) => {
         await likePost({ postId: postData.id, reactionType: reaction }).unwrap();
       }
       setSelectedReaction(reaction);
-      setTopReactionTypes((prev) => {
-        if (prev.includes(reaction)) return prev;
-        return [reaction, ...prev].slice(0, 3);
-      });
       setShowReactionPicker(false);
     } catch (error: any) {
       toast.error(error?.data?.message || 'Failed to update post like');
@@ -700,14 +672,6 @@ export const PostComponent = ({ postData }: PostComponentProps) => {
     try {
       const result = await fetchPostLikes({ postId: postData.id, limit: 10 }).unwrap();
       setPostLikedUsers(result.users);
-      // refresh top reaction types from real data
-      const types: ReactionType[] = [];
-      for (const u of result.users) {
-        const t = (u.reactionType || 'like') as ReactionType;
-        if (!types.includes(t)) types.push(t);
-        if (types.length === 3) break;
-      }
-      if (types.length > 0) setTopReactionTypes(types);
       setShowPostLikes(true);
     } catch {
       toast.error('Failed to load post likes');

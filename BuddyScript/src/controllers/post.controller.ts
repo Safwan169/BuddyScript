@@ -148,6 +148,20 @@ const ensurePostAndAccess = async (postId: string, userId: string) => {
   return post;
 };
 
+const ensurePostAccessOnly = async (postId: string, userId: string) => {
+  const post = await Post.findById(postId).select('author visibility').lean();
+
+  if (!post) {
+    throw new AppError(404, 'Post not found');
+  }
+
+  if (!canUserViewPost(post, userId)) {
+    throw new AppError(403, 'You are not allowed to view this post');
+  }
+
+  return post;
+};
+
 export const createPost = asyncHandler(async (req: Request, res: Response) => {
   const { content, imageUrl, visibility } = req.body;
 
@@ -400,7 +414,7 @@ export const likePost = asyncHandler(async (req: Request, res: Response) => {
     throw new AppError(401, 'Unauthorized');
   }
 
-  await ensurePostAndAccess(req.params.id, req.user.id);
+  await ensurePostAccessOnly(req.params.id, req.user.id);
 
   const reactionType: string = (req.body?.reactionType as string) || 'like';
 
@@ -470,7 +484,7 @@ export const unlikePost = asyncHandler(async (req: Request, res: Response) => {
     throw new AppError(401, 'Unauthorized');
   }
 
-  await ensurePostAndAccess(req.params.id, req.user.id);
+  await ensurePostAccessOnly(req.params.id, req.user.id);
 
   const data = await runInTransaction(async (session) => {
     const deleted = await Like.deleteOne(
@@ -519,7 +533,7 @@ export const getPostLikes = asyncHandler(async (req: Request, res: Response) => 
     throw new AppError(401, 'Unauthorized');
   }
 
-  await ensurePostAndAccess(req.params.id, req.user.id);
+  await ensurePostAccessOnly(req.params.id, req.user.id);
 
   const legacyPageQuery = typeof req.query.page === 'string';
   const limit = parseLimit(req.query.limit, 20, 100);

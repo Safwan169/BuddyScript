@@ -25,6 +25,10 @@ import {
   createReplySchema,
   getRepliesSchema,
 } from "../validators/comment.validator";
+import {
+  socialReadRateLimiter,
+  socialWriteRateLimiter,
+} from "../middleware/rateLimit";
 import { z } from "zod";
 const objectIdRegex = /^[a-f\d]{24}$/i;
 
@@ -32,21 +36,22 @@ const router = Router();
 
 router.use(authenticate);
 
-router.post("/posts/:postId/comments", validateRequest(createCommentSchema), createComment);
-router.get("/posts/:postId/comments", validateRequest(getCommentsSchema), getComments);
+router.post("/posts/:postId/comments", socialWriteRateLimiter, validateRequest(createCommentSchema), createComment);
+router.get("/posts/:postId/comments", socialReadRateLimiter, validateRequest(getCommentsSchema), getComments);
 
-router.put("/comments/:id", validateRequest(updateCommentSchema), updateComment);
-router.delete("/comments/:id", validateRequest(getCommentSchema), deleteComment);
+router.put("/comments/:id", socialWriteRateLimiter, validateRequest(updateCommentSchema), updateComment);
+router.delete("/comments/:id", socialWriteRateLimiter, validateRequest(getCommentSchema), deleteComment);
 
-router.post("/comments/:id/like", validateRequest(getCommentSchema), likeComment);
-router.delete("/comments/:id/like", validateRequest(getCommentSchema), unlikeComment);
-router.get("/comments/:id/likes", validateRequest(getCommentSchema), getCommentLikes);
+router.post("/comments/:id/like", socialWriteRateLimiter, validateRequest(getCommentSchema), likeComment);
+router.delete("/comments/:id/like", socialWriteRateLimiter, validateRequest(getCommentSchema), unlikeComment);
+router.get("/comments/:id/likes", socialReadRateLimiter, validateRequest(getCommentSchema), getCommentLikes);
 
-router.post("/comments/:commentId/replies", validateRequest(createReplySchema), createReply);
-router.get("/comments/:commentId/replies", validateRequest(getRepliesSchema), getReplies);
+router.post("/comments/:commentId/replies", socialWriteRateLimiter, validateRequest(createReplySchema), createReply);
+router.get("/comments/:commentId/replies", socialReadRateLimiter, validateRequest(getRepliesSchema), getReplies);
 
 router.put(
   "/replies/:id",
+  socialWriteRateLimiter,
   validateRequest(
     z.object({
       params: z.object({ id: z.string().regex(objectIdRegex, 'Invalid reply id') }),
@@ -58,6 +63,7 @@ router.put(
 
 router.delete(
   "/replies/:id",
+  socialWriteRateLimiter,
   validateRequest(
     z.object({ params: z.object({ id: z.string().regex(objectIdRegex, 'Invalid reply id') }) })
   ),
@@ -66,6 +72,7 @@ router.delete(
 
 router.post(
   "/replies/:id/like",
+  socialWriteRateLimiter,
   validateRequest(
     z.object({ params: z.object({ id: z.string().regex(objectIdRegex, 'Invalid reply id') }) })
   ),
@@ -74,6 +81,7 @@ router.post(
 
 router.delete(
   "/replies/:id/like",
+  socialWriteRateLimiter,
   validateRequest(
     z.object({ params: z.object({ id: z.string().regex(objectIdRegex, 'Invalid reply id') }) })
   ),
@@ -82,6 +90,7 @@ router.delete(
 
 router.get(
   "/replies/:id/likes",
+  socialReadRateLimiter,
   validateRequest(
     z.object({ params: z.object({ id: z.string().regex(objectIdRegex, 'Invalid reply id') }) })
   ),
