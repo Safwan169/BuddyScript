@@ -1,9 +1,9 @@
 export const defaultSEO = {
-  title: process.env.NEXT_PUBLIC_APP_NAME || "BuddyScript ",
+  title: process.env.NEXT_PUBLIC_APP_NAME || "Buddy Script ",
   description: "Professional Next.js boilerplate with RTK Query, TanStack Query, Axios, and more.",
   openGraph: {
     type: "website",
     locale: "en_US",
-    site_name: process.env.NEXT_PUBLIC_APP_NAME || "BuddyScript"
+    site_name: process.env.NEXT_PUBLIC_APP_NAME || "Buddy Script"
   }
 };

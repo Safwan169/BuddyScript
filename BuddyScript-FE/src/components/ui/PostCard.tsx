@@ -728,7 +728,7 @@ export const PostComponent = ({ postData }: PostComponentProps) => {
             </div>
             <div className="_feed_inner_timeline_post_box_txt">
               <h4 className="_feed_inner_timeline_post_box_title">{fullName(postData.author)}</h4>
-              <p className="_feed_inner_timeline_post_box_para">{formatTimeAgo(postData.createdAt)} . <a href="#0">{postData.visibility === 'private' ? '🔒 Private' : '🌐 Public'}</a></p>
+              <p className="_feed_inner_timeline_post_box_para">{formatTimeAgo(postData.createdAt)} . <a href="#0">{postData.visibility === 'private' ? ' Private' : ' Public'}</a></p>
             </div>
           </div>
           <div className="_feed_inner_timeline_post_box_dropdown" ref={dropdownRef}>

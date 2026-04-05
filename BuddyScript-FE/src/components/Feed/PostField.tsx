@@ -128,15 +128,46 @@ const PostField = () => {
           </div>
         )}
 
-        <div style={{ display: 'flex', alignItems: 'center', padding: '8px 0 4px' }}>
-          <button
-            type="button"
-            className="_feed_inner_text_area_bottom_photo_link"
-            style={{ fontSize: '13px', padding: '4px 10px', border: '1px solid var(--color5)', borderRadius: '4px' }}
-            onClick={() => setVisibility((v) => (v === 'public' ? 'private' : 'public'))}
-          >
-            {visibility === 'public' ? '🌐 Public' : '🔒 Private'}
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '10px 0 4px' }}>
+          <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+            <span style={{ position: 'absolute', left: '9px', pointerEvents: 'none', display: 'flex', alignItems: 'center', zIndex: 1 }}>
+              {visibility === 'public' ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24">
+                  <path fill="#1890FF" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24">
+                  <path fill="#888" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                </svg>
+              )}
+            </span>
+            <select
+              value={visibility}
+              onChange={(e) => setVisibility(e.target.value as 'public' | 'private')}
+              style={{
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                border: '1px solid #e4e6eb',
+                borderRadius: '20px',
+                padding: '5px 26px 5px 28px',
+                fontSize: '13px',
+                fontWeight: 500,
+                color: visibility === 'public' ? '#1890FF' : '#666',
+                background: visibility === 'public' ? '#e8f4ff' : '#f0f2f5',
+                cursor: 'pointer',
+                outline: 'none',
+                lineHeight: '1.4',
+              }}
+            >
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+            </select>
+            <span style={{ position: 'absolute', right: '9px', pointerEvents: 'none', display: 'flex', alignItems: 'center' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 24 24">
+                <path fill={visibility === 'public' ? '#1890FF' : '#888'} d="M7 10l5 5 5-5z"/>
+              </svg>
+            </span>
+          </div>
         </div>
 
         <ComposerActionRow
