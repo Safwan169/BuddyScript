@@ -5785,6 +5785,13 @@
     visibility: hidden;
     transition:.2s all ease;
 }
+._feed_timeline_dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    -webkit-transform: translateY(48px);
+    -ms-transform: translateY(48px);
+    transform: translateY(48px);
+}
 ._feed_timeline_dropdown_item {
     margin:0 0 16px 0;
 }
