@@ -8,8 +8,7 @@ import { type IFormInput, registrationSchema } from '@/schemas/register.schema';
 import { toast } from 'sonner';
 import { useRegisterMutation } from '@/features/user/userApi';
 import { useRouter } from 'next/navigation';
-import { useDispatch, useSelector } from 'react-redux';
-import { setCredentials } from '@/features/user/userSlice';
+import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { shouldRedirectAuthPage } from '@/lib/authFlow';
 
@@ -28,7 +27,6 @@ const RegistrationPage = () => {
 
   const [registerUser] = useRegisterMutation();
   const router = useRouter();
-  const dispatch = useDispatch();
   const { authChecked, isAuthenticated } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
@@ -47,23 +45,16 @@ const RegistrationPage = () => {
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
-      const result = await registerUser({
+      await registerUser({
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
         password: data.password,
       }).unwrap();
 
-      dispatch(
-        setCredentials({
-          user: result.user,
-          legacyAccessToken: result.legacyAccessToken,
-        })
-      );
-
-      toast.success('Registration successful');
+      toast.success('Registration successful! Please log in.');
       reset();
-      router.replace('/');
+      router.replace('/login');
     } catch (error: any) {
       toast.error(error?.data?.message || 'Registration failed. Please try again.');
     }
