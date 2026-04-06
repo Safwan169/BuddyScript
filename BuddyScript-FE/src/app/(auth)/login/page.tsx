@@ -103,11 +103,16 @@ const LoginPage = () => {
                 <div className="_social_login_left_logo _mar_b28">
                   <img src="/assets/images/logo.svg" alt="Logo" className="_left_logo" />
                 </div>
-                <p className="_social_login_content_para _mar_b8">Welcome Back</p>
-                <h4 className="_social_login_content_title _title4 _mar_b50">Login to your account</h4>
+                <p className="_social_login_content_para _mar_b8">Welcome back</p>
+                <h4 className="_social_login_content_title _titl4 _mar_b50">Login to your account</h4>
+
+                <button type="button" className="_social_login_content_btn _mar_b40">
+                  <img src="/assets/images/google.svg" alt="Google" className="_google_img" />{' '}
+                  <span>Or sign-in with google</span>
+                </button>
 
                 <div className="_social_login_content_bottom_txt _mar_b40">
-                  <span>Sign in to continue</span>
+                  <span>Or</span>
                 </div>
 
                 <form className="_social_login_form" onSubmit={handleSubmit(onSubmit)}>
@@ -164,6 +169,11 @@ const LoginPage = () => {
                         </label>
                       </div>
                     </div>
+                    <div className="col-lg-6 col-xl-6 col-md-6 col-sm-12">
+                      <div className="_social_login_form_left">
+                        <p className="_social_login_form_left_para">Forgot password?</p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="row">
@@ -171,7 +181,7 @@ const LoginPage = () => {
                       <div className="_social_login_form_btn _mar_t40 _mar_b60">
                         <button
                           type="submit"
-                          className="_social_login_form_btn_link _btn1 _btn2"
+                          className="_social_login_form_btn_link _btn1"
                           disabled={isSubmitting}
                         >
                           {isSubmitting ? 'Logging in...' : 'Login now'}

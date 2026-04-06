@@ -354,6 +354,7 @@
     font-size: 14px;
     line-height: 1.4;
     margin: 2px 0 0 23px;
+    white-space: nowrap;
 }
 ._social_login_bottom_txt_para {
     font-size: 14px;
@@ -520,6 +521,18 @@
 }
 ._social_registration_bottom_txt_para a {
     color: var(--color5);
+}
+
+._social_registration_form_btn {
+    text-align: center;
+}
+
+._social_registration_form_btn ._btn1 {
+    white-space: nowrap;
+}
+
+._social_registration_bottom_txt {
+    text-align: center;
 }
 /*------ Registration Css End --------*/
 
@@ -6435,6 +6448,7 @@ ul {
     font-weight: 500;
     font-size: 16px;
     color: #fff;
+    white-space: nowrap;
 }
 
 ._btn1:hover {

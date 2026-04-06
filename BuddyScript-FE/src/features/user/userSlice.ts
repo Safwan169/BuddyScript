@@ -100,12 +100,13 @@ const userSlice = createSlice({
       saveSession(action.payload.user, action.payload.legacyAccessToken || null);
     });
 
-    builder.addMatcher(userApi.endpoints.register.matchFulfilled, (state, action) => {
-      state.user = action.payload.user;
-      state.isAuthenticated = true;
+    builder.addMatcher(userApi.endpoints.register.matchFulfilled, (state) => {
+      // Registration should not auto-login; user must authenticate from /login.
+      state.user = null;
+      state.isAuthenticated = false;
       state.authChecked = true;
-      state.legacyAccessToken = action.payload.legacyAccessToken || null;
-      saveSession(action.payload.user, action.payload.legacyAccessToken || null);
+      state.legacyAccessToken = null;
+      clearSession();
     });
 
     builder.addMatcher(userApi.endpoints.getProfile.matchFulfilled, (state, action) => {

@@ -106,6 +106,15 @@ const RegistrationPage = () => {
                 <p className="_social_registration_content_para _mar_b8">Get Started Now</p>
                 <h4 className="_social_registration_content_title _title4 _mar_b50">Registration</h4>
 
+                <button type="button" className="_social_registration_content_btn _mar_b40">
+                  <img src="/assets/images/google.svg" alt="Google" className="_google_img" />
+                  <span>Register with google</span>
+                </button>
+
+                <div className="_social_registration_content_bottom_txt _mar_b40">
+                  <span>Or</span>
+                </div>
+
                 <form className="_social_registration_form" onSubmit={handleSubmit(onSubmit)}>
                   <div className="row">
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -117,9 +126,12 @@ const RegistrationPage = () => {
                           type="text"
                           className="form-control _social_registration_input"
                           id="firstName"
+                          placeholder="Enter your first name"
                           {...register('firstName')}
                         />
-                        {errors.firstName && <p className="text-danger">{errors.firstName.message}</p>}
+                        {errors.firstName && (
+                          <p className="text-danger small mt-1 mb-0">{errors.firstName.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -132,9 +144,12 @@ const RegistrationPage = () => {
                           type="text"
                           className="form-control _social_registration_input"
                           id="lastName"
+                          placeholder="Enter your last name"
                           {...register('lastName')}
                         />
-                        {errors.lastName && <p className="text-danger">{errors.lastName.message}</p>}
+                        {errors.lastName && (
+                          <p className="text-danger small mt-1 mb-0">{errors.lastName.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -147,9 +162,12 @@ const RegistrationPage = () => {
                           type="email"
                           className="form-control _social_registration_input"
                           id="email"
+                          placeholder="Enter your email"
                           {...register('email')}
                         />
-                        {errors.email && <p className="text-danger">{errors.email.message}</p>}
+                        {errors.email && (
+                          <p className="text-danger small mt-1 mb-0">{errors.email.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -162,9 +180,12 @@ const RegistrationPage = () => {
                           type="password"
                           className="form-control _social_registration_input"
                           id="password"
+                          placeholder="Create your password"
                           {...register('password')}
                         />
-                        {errors.password && <p className="text-danger">{errors.password.message}</p>}
+                        {errors.password && (
+                          <p className="text-danger small mt-1 mb-0">{errors.password.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -180,10 +201,11 @@ const RegistrationPage = () => {
                           type="password"
                           className="form-control _social_registration_input"
                           id="repeatPassword"
+                          placeholder="Repeat your password"
                           {...register('repeatPassword')}
                         />
                         {errors.repeatPassword && (
-                          <p className="text-danger">{errors.repeatPassword.message}</p>
+                          <p className="text-danger small mt-1 mb-0">{errors.repeatPassword.message}</p>
                         )}
                       </div>
                     </div>
@@ -205,7 +227,9 @@ const RegistrationPage = () => {
                           I agree to terms &amp; conditions
                         </label>
                       </div>
-                      {errors.terms && <p className="text-danger">{errors.terms.message}</p>}
+                      {errors.terms && (
+                        <p className="text-danger small mt-1 mb-0">{errors.terms.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -214,7 +238,7 @@ const RegistrationPage = () => {
                       <div className="_social_registration_form_btn _mar_t40 _mar_b60">
                         <button
                           type="submit"
-                          className="_social_registration_form_btn_link _btn1 row"
+                          className="_social_registration_form_btn_link _btn1"
                           disabled={isSubmitting}
                         >
                           {isSubmitting ? 'Registering...' : 'Register Now'}
